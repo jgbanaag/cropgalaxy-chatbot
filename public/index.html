@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CropGalaxy Chatbot</title>
+        <style>
+            body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+            #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; margin-bottom: 10px; }
+            .msg { margin-bottom: 8px; }
+            .user { font-weight: bold; color: #333; }
+        </style>
+    </head>
+    <body>
+        <h2>CropGalaxy Assistant</h2>
+        <div id="chat"></div>
+        <input type="text" id="messageInput" placeholder="Ask me something..." style="width: 80%;" />
+        <button onclick="sendMessage()">Send</button>
+
+        <script>
+            async function sendMessage() {
+                const input = document.getElementById('messageInput');
+                const chat = document.getElementById('chat');
+                const text = input.value;
+                if (!text.trim()) return;
+
+                chat.innerHTML += `<div class="msg"><span class="user">You:</span> ${text}</div>`;
+                input.value = "";
+
+                const res = await fetch("/chat", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+                });
+
+                const data = await res.json();
+                chat.innerHTML += `<div class="msg"><span class="user">Bot:</span> ${data.reply}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }
+        </script>
+
+        <div id="cropgalaxy-chatbot-container"></div>
+    </body>
+</html>
